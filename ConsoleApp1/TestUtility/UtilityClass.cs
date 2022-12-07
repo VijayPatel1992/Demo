@@ -21,7 +21,9 @@ namespace ConsoleApp1.TestUtility
         /// <returns>Returns the FielName</returns>
         public string TakeScreenShot(string filename, IWebDriver Driver)
         {
+            rootpath = Directory.GetParent(rootpath).FullName;
             string pathString = System.IO.Path.Combine(rootpath, "ScreenShots");
+            
             System.IO.DirectoryInfo ScreenShotdir = new System.IO.DirectoryInfo(pathString);
 
             if (!ScreenShotdir.Exists)
