@@ -1,5 +1,6 @@
 ﻿using ConsoleApp1.Base;
 using ConsoleApp1.POM;
+using ConsoleApp1.TestUtility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -23,8 +24,9 @@ namespace ConsoleApp1.TestCases
             try
             {
                 HomePage _HomePage = new HomePage(Driver);
+                UtilityClass utilityClass = new UtilityClass();
                 _HomePage.ClickOnElements(Driver);
-                TakeScreenShot(MethodBase.GetCurrentMethod().Name, Driver);
+                utilityClass.TakeScreenShot(MethodBase.GetCurrentMethod().Name, Driver);
             }
             catch (Exception ex)
             {
