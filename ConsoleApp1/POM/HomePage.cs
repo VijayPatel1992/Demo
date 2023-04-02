@@ -38,25 +38,20 @@ namespace ConsoleApp1.POM
         [FindsBy(How = How.XPath, Using = "//*[@id='app']/div/div/div[2]/div/div[1]/div/div[2]")]
         private IWebElement elements { get; set; }
 
-        By Element1 = By.XPath("//*[@id='app']/div/div/div[2]/div/div[1]/div/div[2]");
-
         #endregion
 
         #region Methods
 
         public void ClickOnElements(IWebDriver Driver)
         {
-            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(20));
+            TestUtility.UtilityClass.WaitForElementToBeClickable(elements);
 
-            wait.Until(ExpectedConditions.ElementToBeClickable(elements));
-
-            IJavaScriptExecutor JS = (IJavaScriptExecutor)Driver;
-
-            JS.ExecuteScript("arguments[0].scrollIntoView(true);", elements);
-
+            TestUtility.UtilityClass.ScrollToElement(elements);
 
             elements.Click();
+
         }
+
 
         #endregion
 

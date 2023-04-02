@@ -4,32 +4,67 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
+using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
+using SeleniumExtras.PageObjects;
+using OpenQA.Selenium.Support.UI;
 
 namespace ConsoleApp1.Base
 {
     public class BaseClass
     {
-
         #region Variables
 
         public static IWebDriver _Driver;
         public static string _Browser = ConfigurationManager.AppSettings["Browser"].ToUpper();
+        public static string rootpath = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
+        public WebDriverWait _browserWait;
 
-        static string rootpath = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
-        
+        public WebDriverWait BrowserWait
+        {
+            get
+            {
+                if (_browserWait == null || Driver == null)
+                {
+                    throw new NullReferenceException("The WebDriver browser wait instance was not initialized. You should first call the method Start.");
+                }
+                return _browserWait;
+            }
+            set
+            {
+                _browserWait = value;
+            }
+        }
 
+        #region Enum
+        public enum EnumBrowser
+        {
+            CHROME,
+            CHROME_HEADLESS,
+            FIREFOX,
+            FIREFOX_HEADLESS
+        }
+        public enum GroupHeader
+        {
+            Elements,
+            Forms
+        }
+
+        #endregion
+
+        #endregion
+
+        #region DriverOptions
         private static DriverOptions GetBrowserOptions()
         {
-
-            
             if (Convert.ToBoolean(ConfigurationManager.AppSettings["IsBrowserOptionEnable"]).Equals(true))
             {
-
                 if (_Browser.Equals(EnumBrowser.CHROME.ToString()))
                 {
                     ChromeOptions option = new ChromeOptions();
@@ -45,29 +80,20 @@ namespace ConsoleApp1.Base
                     option.AcceptInsecureCertificates = true;
                     option.SetPreference("disable-popup-blocking", "true");
                     return option;
-
                 }
                 {
                     return null;
                 }
-
-                
-               
             }
             else
             {
                 return null;
             }
-            
         }
 
-        public enum EnumBrowser
-        {
-            CHROME,
-            CHROME_HEADLESS,
-            FIREFOX,
-            FIREFOX_HEADLESS
-        }
+        #endregion
+
+        #region Initialization        
 
         public static IWebDriver Driver
         {
@@ -75,7 +101,7 @@ namespace ConsoleApp1.Base
             {
                 if (_Driver == null)
                 {
-                   throw new NullReferenceException("The WebDriver browser instance was not initialized. You should first call the method Start.");
+                    throw new NullReferenceException("The WebDriver browser instance was not initialized. You should first call the method Start.");
                 }
                 return _Driver;
             }
@@ -85,19 +111,12 @@ namespace ConsoleApp1.Base
             }
         }
 
-
-        #endregion
-
-        #region Initialization       
-
         [TestInitialize]
         public void InitializeTest()
         {
-            
             InitializeDriver(GetBrowserOptions());
         }
-
-        public static void InitializeDriver( object browserOptions = null)
+        public static void InitializeDriver(object browserOptions = null)
         {
 
             switch (_Browser)
@@ -105,9 +124,9 @@ namespace ConsoleApp1.Base
 
                 case "CHROME":
 
-                    if ( Convert.ToBoolean(ConfigurationManager.AppSettings["IsBrowserOptionEnable"]).Equals(true))
+                    if (Convert.ToBoolean(ConfigurationManager.AppSettings["IsBrowserOptionEnable"]).Equals(true))
                     {
-                        Driver = new ChromeDriver(rootpath+ "\\Driver\\chromedriver.exe",(ChromeOptions)browserOptions);
+                        Driver = new ChromeDriver(rootpath + "\\Driver\\chromedriver.exe", (ChromeOptions)browserOptions);
 
                     }
                     else
@@ -116,7 +135,7 @@ namespace ConsoleApp1.Base
                         Driver.Manage().Window.Maximize();
 
                     }
-               
+
                     break;
 
                 case "FIREFOX":
@@ -140,40 +159,13 @@ namespace ConsoleApp1.Base
             }
 
             Driver.Url = ConfigurationManager.AppSettings["URL"];
+            TestUtility.UtilityClass.WaitForBrowserLoad();
 
-        }
-
-        #endregion
-
-        #region Utilities
-
-    
-
-        /// <summary>
-        /// Captures Screenshot wand has specified filename 
-        /// </summary>
-        /// <param name="filename"> Screenshot FileName </param>
-        /// <returns>Returns the FielName</returns>
-        public string TakeScreenShot(string filename, IWebDriver Driver)
-        {
-            string pathString = System.IO.Path.Combine(rootpath, "ScreenShots");
-            System.IO.DirectoryInfo ScreenShotdir = new System.IO.DirectoryInfo(pathString);
-
-            if (!ScreenShotdir.Exists)
-                System.IO.Directory.CreateDirectory(pathString);
-
-
-            filename = filename + " " + DateTime.UtcNow.ToString("yyyy-MM-dd-mm-ss") + ".jpeg";
-            filename = Path.Combine(pathString, filename);
-
-            ((ITakesScreenshot)Driver).GetScreenshot().SaveAsFile(filename, ScreenshotImageFormat.Jpeg);
-         
-
-            return filename;
         }
         #endregion
 
         #region Test Cleanup
+
         [TestCleanup]
         public void TearDown()
         {

@@ -39,6 +39,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ExcelDataReader, Version=3.6.0.0, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExcelDataReader.3.6.0\lib\net45\ExcelDataReader.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.2.2.10\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
     </Reference>
@@ -52,10 +55,12 @@
       <HintPath>..\packages\DotNetSeleniumExtras.WaitHelpers.3.11.0\lib\net45\SeleniumExtras.WaitHelpers.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceProcess" />
@@ -77,18 +82,21 @@
   <ItemGroup>
     <Compile Include="Base\BaseClass.cs" />
     <Compile Include="Base\Programme.cs" />
+    <Compile Include="POM\ElementPage.cs" />
     <Compile Include="POM\HomePage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestCases\TestClass.cs" />
+    <Compile Include="TestUtility\ExcelUtility.cs" />
+    <Compile Include="TestUtility\UtilityClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="TestData\Sample Test data.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TestData\" />
-    <Folder Include="TestUtility\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Driver\chromedriver.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
