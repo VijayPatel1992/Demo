@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Data.OleDb;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -42,7 +43,7 @@ namespace ConsoleApp1.TestUtility
             if (!ScreenShotdir.Exists)
                 System.IO.Directory.CreateDirectory(pathString);
 
-            filename = filename + " " + DateTime.Now.ToString("yyyy_MM_dd-HHmmss")  + ".jpeg";
+            filename = filename + " " + DateTime.Now.ToString("yyyy_MM_dd-HHmmss") + ".jpeg";
             filename = Path.Combine(pathString, filename);
 
             ((ITakesScreenshot)Driver).GetScreenshot().SaveAsFile(filename, ScreenshotImageFormat.Jpeg);
@@ -68,10 +69,7 @@ namespace ConsoleApp1.TestUtility
             return attribute == null ? value.ToString() : attribute.Description;
         }
 
-        #endregion
-
-
-      
+        #endregion      
 
         /// <summary>
         /// ScrollToElement(IWebElement ele) -- TO Scroll in to the Element
@@ -93,8 +91,6 @@ namespace ConsoleApp1.TestUtility
             BrowserWait.Until(ExpectedConditions.ElementToBeClickable(ele));
         }
 
-
-
         /// <summary>
         /// An expectation to wait and check an element is either invisible or not present in the DOM.
         /// </summary>
@@ -108,14 +104,14 @@ namespace ConsoleApp1.TestUtility
                 BrowserWait.Until(ExpectedConditions.InvisibilityOfElementLocated(locator));
                 if (!result)
                     throw new WebDriverTimeoutException();
-            }            
+            }
             catch (Exception e)
             {
                 Console.WriteLine(e.StackTrace);
                 Console.WriteLine(e.Message);
-                
 
-                
+
+
             }
         }
 
@@ -150,7 +146,6 @@ namespace ConsoleApp1.TestUtility
             }
         }
 
-
         /// <summary>
         /// An expectation to wait for ajax load to be completed.
         /// </summary>
@@ -167,7 +162,7 @@ namespace ConsoleApp1.TestUtility
                 }
             }
             catch (Exception e)
-            {                
+            {
                 Console.WriteLine(e);
             }
         }
@@ -202,8 +197,6 @@ namespace ConsoleApp1.TestUtility
                 Console.WriteLine(e.Message);
             }
         }
-
-
 
         /// <summary>
         /// An expectation to wait for network calls to be finished.
@@ -268,5 +261,72 @@ namespace ConsoleApp1.TestUtility
                 Console.WriteLine(e.Message);
             }
         }
+
+        /// <summary>
+        /// Wait until an element is no longer attached to the DOM.
+        /// </summary>
+        /// <param name="locator">Locator for the web element.</param>
+        /// <param name="SecondsToWait">Maximum seconds to wait for staleness<see/>.</param>
+        public static void WaitForElementStaleness(IWebElement ele, int SecondsToWait = 20)
+        {
+            bool result = false;
+            try
+            {
+                WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(SecondsToWait));
+                result = wait.Until(ExpectedConditions.StalenessOf(ele));
+                if (!result)
+                    throw new WebDriverTimeoutException();
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Interacts with windows form to select file from windows explorer
+        /// </summary>
+        /// <param name="fileLocation"> Location of file to be uploaded</param>
+        /// <param name="windowTitle">Title of windows dialog, by default set to "Open" </param>
+        public static void FileUploader(string fileLocation, string windowTitle = "Open")
+        {
+
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.CreateNoWindow = false;
+            startInfo.UseShellExecute = false;
+            startInfo.FileName = Directory.GetCurrentDirectory() + "\\AutoIT\\FileUploadScript.exe";
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            startInfo.Arguments = $"\"{fileLocation}\"";
+
+            // Call WaitForExit and then the using statement will close.
+            using (Process exeProcess = Process.Start(startInfo))
+            {
+                exeProcess.WaitForExit();
+            }
+        }
+
+        public IWebElement ShadowDOM_ele(string ExecutorString)
+        {
+            IWebElement _element = null;
+
+            try
+            {
+                IJavaScriptExecutor Js = (IJavaScriptExecutor)Driver;
+                _element = ((IWebElement)Js.ExecuteScript("return " + ExecutorString));
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            return _element;
+        }
+
     }
+
+
 }
+

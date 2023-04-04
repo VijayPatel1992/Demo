@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ConsoleApp1.POM
@@ -71,6 +72,9 @@ namespace ConsoleApp1.POM
             [Description("Buttons")]
             Buttons,
 
+            [Description("Upload and Download")]
+            UploadAndDownload,
+
             #endregion
 
             #region Widgets
@@ -91,33 +95,59 @@ namespace ConsoleApp1.POM
 
         By DDLSelectValueEntry = By.XPath("//*[@id='withOptGroup']//div[contains(@class, 'option')]");
 
+
+        By GrouHeaderToClick(string groupheader)
+        {
+            return By.XPath("//*[@class='element-group']//*[text() ='" + groupheader + "']");
+        }
+        
+        By DivGroupHeader(string groupheader)
+        {
+            return By.XPath("//*[@class='element-group']//*[text() ='" + groupheader + "']/../../../div[contains(@class, 'element-list')]");
+        }
+
+        By LeftPaneElement(string groupheader, string ElementName)
+        {
+            return By.XPath("//*[@class='element-group']//*[text() ='" + groupheader + "']/../../..//span[text() = '" + ElementName + "']");
+        }
+
+
+        [FindsBy(How = How.XPath, Using = "//*[@id='uploadFile']")]
+        private IWebElement BtnChooseFile { get; set; }
+
+
         #endregion
 
         public void ClickOnLeftPaneElement(IWebDriver Driver, string groupheader, string ElementName)
         {
-             WebDriverWait BrowserWait = new WebDriverWait(Driver, TimeSpan.FromSeconds(20));
-
-            By GrouHeaderToClick = By.XPath("//*[@class='element-group']//*[text() ='" + groupheader + "']");
-            
-            By DivGroupHeader = By.XPath("//*[@class='element-group']//*[text() ='" + groupheader + "']/../../../div[contains(@class, 'element-list')]");
-
-            By LeftPaneElement = By.XPath("//*[@class='element-group']//*[text() ='" + groupheader + "']/../../..//span[text() = '" + ElementName + "']");
+            WebDriverWait BrowserWait = new WebDriverWait(Driver, TimeSpan.FromSeconds(20));
 
 
-            if (BrowserWait.Until(ExpectedConditions.ElementExists(DivGroupHeader)).GetAttribute("class").Equals("element-list collapse"))
+            if (BrowserWait.Until(ExpectedConditions.ElementExists(DivGroupHeader(groupheader))).GetAttribute("class").Equals("element-list collapse"))
             {
-                TestUtility.UtilityClass.ScrollToElement(Driver.FindElement(GrouHeaderToClick));
-                BrowserWait.Until(ExpectedConditions.ElementToBeClickable(GrouHeaderToClick)).Click();
+                TestUtility.UtilityClass.ScrollToElement(Driver.FindElement(GrouHeaderToClick(groupheader)));
+                BrowserWait.Until(ExpectedConditions.ElementToBeClickable(GrouHeaderToClick(groupheader))).Click();
             }
 
-            TestUtility.UtilityClass.ScrollToElement(Driver.FindElement(LeftPaneElement));
-            BrowserWait.Until(ExpectedConditions.ElementToBeClickable(LeftPaneElement)).Click();
+            TestUtility.UtilityClass.ScrollToElement(Driver.FindElement(LeftPaneElement(groupheader, ElementName)));
+            BrowserWait.Until(ExpectedConditions.ElementToBeClickable(LeftPaneElement(groupheader, ElementName))).Click();
 
         }
 
         public void SelectValueFromDroDown()
         {
             TestUtility.UtilityClass.SelectValueFromResponsiveDDL(DDLSelectValue, DDLSelectValueEntry, "Group 1, option 2");
+        }
+
+        public void UploadFile(string FilePathFromToUpload)
+        {
+            TestUtility.UtilityClass.WaitForElementToBeClickable(BtnChooseFile);
+            IWebElement abc = Driver.FindElement(By.Id("uploadFile"));
+
+            ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].click();", abc);
+            BtnChooseFile.Click();
+            Thread.Sleep(1000);
+            TestUtility.UtilityClass.FileUploader(FilePathFromToUpload);
         }
 
     }

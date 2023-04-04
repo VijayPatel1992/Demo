@@ -56,9 +56,37 @@ namespace ConsoleApp1.TestCases
             }
             catch (Exception ex)
             {
+                Assert.Fail(ex.Message);
                 Console.WriteLine(ex);
             }
 
+        }
+
+        [TestMethod]
+        public void VerifyUploadFunctionality()
+        {
+            try
+            {
+                HomePage _HomePage = new HomePage(Driver);
+                ElementPage _ElementPage = new ElementPage(Driver);
+                TestUtility.ExcelUtility.PopulateInCollection(rootpath + "//TestData//Sample Test data.xlsx", "Patel");
+                string filepath = "C:\\Users\\Vijay Patel\\Documents\\NewUploadAutoIT.au3";
+                _HomePage.ClickOnElements(Driver);
+                UtilityClass.WaitForAjaxLoad();
+
+                _ElementPage.ClickOnLeftPaneElement(Driver, TestUtility.UtilityClass.GetDescriptionFromEnum(EnumLeftPaneGroupHeader.Elements), TestUtility.UtilityClass.GetDescriptionFromEnum(EnumLeftPaneElementList.UploadAndDownload));
+                _ElementPage.UploadFile(filepath);
+
+                TestUtility.UtilityClass.TakeScreenShot(MethodBase.GetCurrentMethod().Name, Driver);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                Console.WriteLine(ex);
+                Assert.Fail(ex.Message);
+                
+            }
         }
     }
 
