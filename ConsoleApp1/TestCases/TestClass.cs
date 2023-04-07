@@ -62,6 +62,7 @@ namespace ConsoleApp1.TestCases
 
         }
 
+
         [TestMethod]
         public void VerifyUploadFunctionality()
         {
@@ -78,6 +79,8 @@ namespace ConsoleApp1.TestCases
                 _ElementPage.UploadFile(filepath);
 
                 TestUtility.UtilityClass.TakeScreenShot(MethodBase.GetCurrentMethod().Name, Driver);
+
+                Assert.AreEqual(@"C:\fakepath\NewUploadAutoIT.au3", _ElementPage.MethodUploadedFilePath()); 
 
             }
             catch (Exception ex)

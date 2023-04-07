@@ -93,6 +93,10 @@ namespace ConsoleApp1.POM
         [FindsBy(How = How.XPath, Using = "//*[@id='withOptGroup']")]
         private IWebElement DDLSelectValue { get; set; }
 
+
+
+        By UploadedFilePath = By.XPath("//*[@id='uploadedFilePath']");
+
         By DDLSelectValueEntry = By.XPath("//*[@id='withOptGroup']//div[contains(@class, 'option')]");
 
 
@@ -111,9 +115,8 @@ namespace ConsoleApp1.POM
             return By.XPath("//*[@class='element-group']//*[text() ='" + groupheader + "']/../../..//span[text() = '" + ElementName + "']");
         }
 
+        By BtnChooseFile = By.XPath("//*[@id='uploadFile']");
 
-        [FindsBy(How = How.XPath, Using = "//*[@id='uploadFile']")]
-        private IWebElement BtnChooseFile { get; set; }
 
 
         #endregion
@@ -141,13 +144,19 @@ namespace ConsoleApp1.POM
 
         public void UploadFile(string FilePathFromToUpload)
         {
-            TestUtility.UtilityClass.WaitForElementToBeClickable(BtnChooseFile);
-            IWebElement abc = Driver.FindElement(By.Id("uploadFile"));
+            WebDriverWait _wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
+            IWebElement EleBrowseButton = _wait.Until(ExpectedConditions.ElementIsVisible(BtnChooseFile));
 
-            ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].click();", abc);
-            BtnChooseFile.Click();
-            Thread.Sleep(1000);
+            ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].click();", EleBrowseButton);
+            Thread.Sleep(2000);
             TestUtility.UtilityClass.FileUploader(FilePathFromToUpload);
+        }
+
+        public string MethodUploadedFilePath()
+        {
+            WebDriverWait _wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
+             IWebElement EleUploadedFilePath = _wait.Until(ExpectedConditions.ElementIsVisible(UploadedFilePath));
+            return EleUploadedFilePath.Text.ToString();
         }
 
     }
