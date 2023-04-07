@@ -17,6 +17,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace ConsoleApp1.Base
 {
+   
     public class BaseClass
     {
         #region Variables
@@ -50,11 +51,7 @@ namespace ConsoleApp1.Base
             FIREFOX,
             FIREFOX_HEADLESS
         }
-        public enum GroupHeader
-        {
-            Elements,
-            Forms
-        }
+      
 
         #endregion
 
@@ -162,6 +159,7 @@ namespace ConsoleApp1.Base
             TestUtility.UtilityClass.WaitForBrowserLoad();
 
         }
+
         #endregion
 
         #region Test Cleanup
