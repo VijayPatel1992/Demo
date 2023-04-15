@@ -1,25 +1,18 @@
-﻿using ConsoleApp1.Base;
+﻿using NLog;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.PageObjects;
-using SeleniumExtras.WaitHelpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace ConsoleApp1.POM
 {
-
-
     public class HomePage
     {
 
         #region Webdriver 
 
         private IWebDriver Driver;
+
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         #endregion
 
@@ -44,12 +37,15 @@ namespace ConsoleApp1.POM
 
         public void ClickOnElements(IWebDriver Driver)
         {
+            _logger.Trace("Attempting to Click on Elements.");
+
             TestUtility.UtilityClass.WaitForElementToBeClickable(elements);
 
             TestUtility.UtilityClass.ScrollToElement(elements);
 
             elements.Click();
 
+            _logger.Info("Successfully clicked on the elements.");
         }
 
 

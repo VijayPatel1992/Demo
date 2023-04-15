@@ -3,21 +3,15 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
-using SeleniumExtras.PageObjects;
 using OpenQA.Selenium.Support.UI;
+using ConsoleApp1.TestReport;
+using NLog;
 
 namespace ConsoleApp1.Base
 {
-   
+
     public class BaseClass
     {
         #region Variables
@@ -26,6 +20,16 @@ namespace ConsoleApp1.Base
         public static string _Browser = ConfigurationManager.AppSettings["Browser"].ToUpper();
         public static string rootpath = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
         public WebDriverWait _browserWait;
+        public static string ReportPath = Path.Combine(Path.GetDirectoryName(Directory.GetParent(Directory.GetParent(rootpath).ToString()).ToString()), "ReportAndScreenShot-" + DateTime.Now.ToString("yyyy-MM-dd"));
+        public static string ScreenSortPath = Path.Combine(ReportPath, "Screenshot");
+        
+        //private static TestContext _testContext;
+        private  Logger _logger = LogManager.GetCurrentClassLogger();
+
+        public TestContext TestContext { get; set; }
+        private ScreenshotTaker ScreenshotTaker { get; set; }
+
+        private Reporter Reporter { get; set; }
 
         public WebDriverWait BrowserWait
         {
@@ -58,7 +62,7 @@ namespace ConsoleApp1.Base
         #endregion
 
         #region DriverOptions
-        private static DriverOptions GetBrowserOptions()
+        private DriverOptions GetBrowserOptions()
         {
             if (Convert.ToBoolean(ConfigurationManager.AppSettings["IsBrowserOptionEnable"]).Equals(true))
             {
@@ -111,10 +115,15 @@ namespace ConsoleApp1.Base
         [TestInitialize]
         public void InitializeTest()
         {
+
+            _logger.Trace("******************Initializing Test******************");
+            Reporter.AddTestCaseMetadataToHtmlReport(TestContext);          
             InitializeDriver(GetBrowserOptions());
+            ScreenshotTaker = new ScreenshotTaker(Driver, TestContext);
+            _logger.Info("Test initialization done successfully. Test Name - " + TestContext.TestName);
         }
-        public static void InitializeDriver(object browserOptions = null)
-        {
+        public void InitializeDriver(object browserOptions = null)
+        {            
 
             switch (_Browser)
             {
@@ -145,7 +154,6 @@ namespace ConsoleApp1.Base
                     else
                     {
                         Driver = new FirefoxDriver();
-                        //Driver = new FirefoxDriver("C:\\Users\\Vijay Patel\\Downloads\\geckodriver-v0.32.0-win-aarch64\\geckodriver.exe");
                         Driver.Manage().Window.Maximize();
 
                     }
@@ -154,10 +162,9 @@ namespace ConsoleApp1.Base
                 default:
                     break;
             }
-
+            _logger.Info(_Browser + " Is initialized successfully " + "With Browser option = " + Convert.ToBoolean(ConfigurationManager.AppSettings["IsBrowserOptionEnable"]) );
             Driver.Url = ConfigurationManager.AppSettings["URL"];
             TestUtility.UtilityClass.WaitForBrowserLoad();
-
         }
 
         #endregion
@@ -167,7 +174,12 @@ namespace ConsoleApp1.Base
         [TestCleanup]
         public void TearDown()
         {
+            _logger.Trace("Driver clean up is started.");
+            ScreenshotTaker.CreateScreenshotIfTestFailed();
+            Reporter.ReportTestOutcome(ScreenshotTaker.ScreenSortPathWithFileName);
             Driver.Quit();
+            _logger.Info("******************Driver clean up performed successfully.******************");
+            
         }
 
         #endregion

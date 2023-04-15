@@ -1,24 +1,22 @@
-﻿using ConsoleApp1.Base;
+﻿using NLog;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.PageObjects;
 using SeleniumExtras.WaitHelpers;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ConsoleApp1.POM
 {
     public class ElementPage
     {
 
-        #region Webdriver 
+        #region Variable initializations. 
 
         private IWebDriver Driver;
+
+        private static Logger _logger  = LogManager.GetCurrentClassLogger();
 
         #endregion
 
@@ -93,12 +91,9 @@ namespace ConsoleApp1.POM
         [FindsBy(How = How.XPath, Using = "//*[@id='withOptGroup']")]
         private IWebElement DDLSelectValue { get; set; }
 
-
-
         By UploadedFilePath = By.XPath("//*[@id='uploadedFilePath']");
 
         By DDLSelectValueEntry = By.XPath("//*[@id='withOptGroup']//div[contains(@class, 'option')]");
-
 
         By GrouHeaderToClick(string groupheader)
         {
@@ -117,14 +112,12 @@ namespace ConsoleApp1.POM
 
         By BtnChooseFile = By.XPath("//*[@id='uploadFile']");
 
-
-
         #endregion
 
         public void ClickOnLeftPaneElement(IWebDriver Driver, string groupheader, string ElementName)
         {
+            _logger.Trace("Attempting to interact elements in the Left Pane. Element Name = " + ElementName);
             WebDriverWait BrowserWait = new WebDriverWait(Driver, TimeSpan.FromSeconds(20));
-
 
             if (BrowserWait.Until(ExpectedConditions.ElementExists(DivGroupHeader(groupheader))).GetAttribute("class").Equals("element-list collapse"))
             {
@@ -134,22 +127,26 @@ namespace ConsoleApp1.POM
 
             TestUtility.UtilityClass.ScrollToElement(Driver.FindElement(LeftPaneElement(groupheader, ElementName)));
             BrowserWait.Until(ExpectedConditions.ElementToBeClickable(LeftPaneElement(groupheader, ElementName))).Click();
-
+            _logger.Info("Successfully Clicked on "+ ElementName  + " in left pane.");
         }
 
         public void SelectValueFromDroDown()
         {
             TestUtility.UtilityClass.SelectValueFromResponsiveDDL(DDLSelectValue, DDLSelectValueEntry, "Group 1, option 2");
+
+            _logger.Info("Value selected from the drop down successfully.");
         }
 
         public void UploadFile(string FilePathFromToUpload)
         {
+            _logger.Trace("Attempting to upload file.");
             WebDriverWait _wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             IWebElement EleBrowseButton = _wait.Until(ExpectedConditions.ElementIsVisible(BtnChooseFile));
 
             ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].click();", EleBrowseButton);
             Thread.Sleep(2000);
             TestUtility.UtilityClass.FileUploader(FilePathFromToUpload);
+            _logger.Info("Files uploaded successfully.");
         }
 
         public string MethodUploadedFilePath()
