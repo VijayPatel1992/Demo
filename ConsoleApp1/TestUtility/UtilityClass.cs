@@ -1,5 +1,4 @@
 ﻿using ConsoleApp1.Base;
-using ExcelDataReader;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
@@ -7,14 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
-using System.Data;
-using System.Data.OleDb;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ConsoleApp1.TestUtility
 {
@@ -35,16 +30,8 @@ namespace ConsoleApp1.TestUtility
         /// <returns>Returns the FielName</returns>
         public static string TakeScreenShot(string filename, IWebDriver Driver)
         {
-            rootpath = Directory.GetParent(rootpath).FullName;
-            string pathString = System.IO.Path.Combine(rootpath, "ScreenShots");
-
-            System.IO.DirectoryInfo ScreenShotdir = new System.IO.DirectoryInfo(pathString);
-
-            if (!ScreenShotdir.Exists)
-                System.IO.Directory.CreateDirectory(pathString);
-
             filename = filename + " " + DateTime.Now.ToString("yyyy_MM_dd-HHmmss") + ".jpeg";
-            filename = Path.Combine(pathString, filename);
+            filename = Path.Combine(BaseClass.ScreenSortPath, filename);
 
             ((ITakesScreenshot)Driver).GetScreenshot().SaveAsFile(filename, ScreenshotImageFormat.Jpeg);
 
