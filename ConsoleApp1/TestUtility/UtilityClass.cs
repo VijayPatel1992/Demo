@@ -67,6 +67,16 @@ namespace ConsoleApp1.TestUtility
             ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].scrollIntoView(true);", ele);
         }
 
+
+        /// <summary>
+        /// ScrollToElement(IWebElement ele) -- To Click on element with Java script executor
+        /// </summary>
+        /// <param name="ele">Iwebelement where needs to scroll</param>
+        public static void JavaScriptClick(IWebElement ele)
+        {
+            ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].click();", ele);
+        }
+
         /// <summary>
         /// WaitForElementToBeClickable(IWebElement ele) - Wait to Element to be Clickabel.
         /// </summary>

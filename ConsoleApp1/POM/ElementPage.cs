@@ -4,6 +4,7 @@ using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.PageObjects;
 using SeleniumExtras.WaitHelpers;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 
@@ -16,7 +17,7 @@ namespace ConsoleApp1.POM
 
         private IWebDriver Driver;
 
-        private static Logger _logger  = LogManager.GetCurrentClassLogger();
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         #endregion
 
@@ -30,61 +31,7 @@ namespace ConsoleApp1.POM
 
         #endregion
 
-        #region Enum
 
-        public enum EnumLeftPaneGroupHeader
-        {
-            [Description("Elements")]
-            Elements,
-
-            [Description("Forms")]
-            Forms,
-
-            [Description("Alerts, Frame & Windows")]
-            AlertFrameWindow,
-
-            [Description("Widgets")]
-            Widgets,
-
-            [Description("Interactions")]
-            Interactions
-
-        }
-
-        public enum EnumLeftPaneElementList
-        {
-            #region Elements           
-
-            [Description("Text Box")]
-            TextBox,
-
-            [Description("Check Box")]
-            CheckBox,
-
-            [Description("Radio Button")]
-            RadioButton,
-
-            [Description("Web Tables")]
-            WebTables,
-
-            [Description("Buttons")]
-            Buttons,
-
-            [Description("Upload and Download")]
-            UploadAndDownload,
-
-            #endregion
-
-            #region Widgets
-
-            [Description("Select Menu")]
-            SelectMenu
-
-            #endregion
-
-        }
-
-        #endregion
 
         #region Elemennts
 
@@ -99,7 +46,7 @@ namespace ConsoleApp1.POM
         {
             return By.XPath("//*[@class='element-group']//*[text() ='" + groupheader + "']");
         }
-        
+
         By DivGroupHeader(string groupheader)
         {
             return By.XPath("//*[@class='element-group']//*[text() ='" + groupheader + "']/../../../div[contains(@class, 'element-list')]");
@@ -111,6 +58,14 @@ namespace ConsoleApp1.POM
         }
 
         By BtnChooseFile = By.XPath("//*[@id='uploadFile']");
+
+
+        By GridRecords = By.XPath("//button[@id = 'addNewRecordButton']/../../following-sibling::div//div[@class='rt-td']");
+
+        By RecordToDelete(string RecordToDelete)
+        {
+            return By.XPath("//button[@id = 'addNewRecordButton']/../../following-sibling::div//div[@class='rt-td' and text() ='" + RecordToDelete + "']/parent::div//span[@title='Delete']");
+        }
 
         #endregion
 
@@ -127,7 +82,7 @@ namespace ConsoleApp1.POM
 
             TestUtility.UtilityClass.ScrollToElement(Driver.FindElement(LeftPaneElement(groupheader, ElementName)));
             BrowserWait.Until(ExpectedConditions.ElementToBeClickable(LeftPaneElement(groupheader, ElementName))).Click();
-            _logger.Info("Successfully Clicked on "+ ElementName  + " in left pane.");
+            _logger.Info("Successfully Clicked on " + ElementName + " in left pane.");
         }
 
         public void SelectValueFromDroDown()
@@ -152,8 +107,42 @@ namespace ConsoleApp1.POM
         public string MethodUploadedFilePath()
         {
             WebDriverWait _wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
-             IWebElement EleUploadedFilePath = _wait.Until(ExpectedConditions.ElementIsVisible(UploadedFilePath));
+            IWebElement EleUploadedFilePath = _wait.Until(ExpectedConditions.ElementIsVisible(UploadedFilePath));
             return EleUploadedFilePath.Text.ToString();
+        }
+
+        public void DeleteRecordFromGrid(string NameReocrdsToDelete)
+        {
+
+            WebDriverWait _wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(20));
+            _wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(GridRecords));
+
+            _wait.Until(ExpectedConditions.ElementToBeClickable(RecordToDelete(NameReocrdsToDelete))).Click();
+
+        }
+
+        public bool VerifyDeletedRecordsInGrid(string DeletedRecords)
+        {
+            bool IsDeletedRecordExist = false;
+
+            WebDriverWait _wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(20));
+
+            _wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(GridRecords));
+
+            IList<IWebElement> GridCollection = Driver.FindElements(GridRecords);
+
+            foreach (WebElement Record in GridCollection)
+            {string abc = Record.Text;
+
+
+                if (Record.Text.Equals(DeletedRecords))
+                {
+                    IsDeletedRecordExist = true;
+                    break;
+                }
+            }
+
+             return IsDeletedRecordExist;
         }
 
     }
