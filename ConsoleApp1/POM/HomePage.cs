@@ -1,7 +1,7 @@
 ﻿using NLog;
 using OpenQA.Selenium;
 using SeleniumExtras.PageObjects;
-
+using System.ComponentModel;
 
 namespace ConsoleApp1.POM
 {
@@ -22,6 +22,71 @@ namespace ConsoleApp1.POM
         {
             this.Driver = Driver;
             PageFactory.InitElements(Driver, this);
+        }
+
+        #endregion
+
+        #region Enum
+
+        public enum EnumLeftPaneGroupHeader
+        {
+            [Description("Elements")]
+            Elements,
+
+            [Description("Forms")]
+            Forms,
+
+            [Description("Alerts, Frame & Windows")]
+            AlertFrameWindow,
+
+            [Description("Widgets")]
+            Widgets,
+
+            [Description("Interactions")]
+            Interactions
+
+        }
+
+        public enum EnumLeftPaneElementList
+        {
+            #region Elements           
+
+            [Description("Text Box")]
+            TextBox,
+
+            [Description("Check Box")]
+            CheckBox,
+
+            [Description("Radio Button")]
+            RadioButton,
+
+            [Description("Web Tables")]
+            WebTables,
+
+            [Description("Buttons")]
+            Buttons,
+
+            [Description("Upload and Download")]
+            UploadAndDownload,
+
+            #endregion
+
+            #region Widgets
+
+            [Description("Select Menu")]
+            SelectMenu,
+
+            #endregion
+
+
+            #region Forms
+
+            [Description("Practice Form")]
+            PracticeForm
+
+
+            #endregion
+
         }
 
         #endregion
