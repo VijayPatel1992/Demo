@@ -15,7 +15,7 @@ namespace ConsoleApp1.POM
 
         #region Variable initializations. 
 
-        private IWebDriver Driver;
+        private readonly IWebDriver Driver;
 
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 

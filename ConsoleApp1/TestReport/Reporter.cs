@@ -44,7 +44,8 @@ namespace ConsoleApp1.TestReport
 
             if (!ReportDirectory.Exists)
                 Directory.CreateDirectory(BaseClass.ReportPath);
-                Directory.CreateDirectory(BaseClass.ScreenSortPath);        
+                Directory.CreateDirectory(BaseClass.ScreenSortPath);
+                Directory.CreateDirectory(BaseClass.CreatedExcelFilePath);
 
             HtmlReportFullPath = $"{BaseClass.ReportPath}\\TestResults.html";
             _logger.Trace("Full path of HTML report=>" + HtmlReportFullPath);
@@ -53,6 +54,7 @@ namespace ConsoleApp1.TestReport
 
         public static void AddTestCaseMetadataToHtmlReport(TestContext testContext)
         {
+            Reporter.StartReporter();
             MyTestContext = testContext;
             CurrentTestCase = ReportManager.CreateTest(MyTestContext.TestName);
         }

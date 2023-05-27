@@ -16,7 +16,7 @@ namespace ConsoleApp1.POM
     {
         #region Webdriver 
 
-        private IWebDriver Driver;
+        private readonly IWebDriver Driver;
 
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 

@@ -16,13 +16,14 @@ namespace ConsoleApp1.Base
     {
         #region Variables
 
-        public static IWebDriver _Driver;
+        protected  static IWebDriver  _Driver;
         public static string _Browser = ConfigurationManager.AppSettings["Browser"].ToUpper();
         public static string rootpath = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
         public WebDriverWait _browserWait;
         public static string ReportPath = Path.Combine(Path.GetDirectoryName(Directory.GetParent(Directory.GetParent(rootpath).ToString()).ToString()), "ReportAndScreenShot-" + DateTime.Now.ToString("yyyy-MM-dd"));
         public static string ScreenSortPath = Path.Combine(ReportPath, "Screenshot");
-        
+        public static string CreatedExcelFilePath = Path.Combine(ReportPath, "ExcelFiles");
+
         //private static TestContext _testContext;
         private  Logger _logger = LogManager.GetCurrentClassLogger();
 
