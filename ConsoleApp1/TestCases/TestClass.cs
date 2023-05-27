@@ -5,11 +5,15 @@ using ConsoleApp1.TestReport;
 using ConsoleApp1.TestUtility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections;
 using System.Data;
 using System.IO;
 using System.Reflection;
 using static ConsoleApp1.POM.ElementPage;
 using static ConsoleApp1.POM.HomePage;
+
+
+[assembly: Parallelize(Workers = 2, Scope = ExecutionScope.MethodLevel)]
 
 namespace ConsoleApp1.TestCases
 {
@@ -30,8 +34,8 @@ namespace ConsoleApp1.TestCases
             {
                 #region Object and variable initialization.
 
-                HomePage _HomePage = new HomePage(Driver);
-                ElementPage _ElementPage = new ElementPage(Driver);
+                _HomePage = new HomePage(Driver);
+                _ElementPage = new ElementPage(Driver);
 
                 #endregion
 
@@ -101,10 +105,11 @@ namespace ConsoleApp1.TestCases
             {
                 #region Object and variable Initialization
 
-                HomePage _HomePage = new HomePage(Driver);
-                ElementPage _ElementPage = new ElementPage(Driver);
+                _HomePage = new HomePage(Driver);
+                _ElementPage = new ElementPage(Driver);
                 TestUtility.ExcelUtility.PopulateInCollection(rootpath + "//TestData//Sample Test data.xlsx", "Patel");
-                string filepath = "C:\\Users\\Vijay Patel\\Documents\\NewUploadAutoIT.au3";
+                string filepath = Path.Combine(rootpath, "FilesToUpload");
+                filepath = filepath + "\\Picture.jpg";
 
                 #endregion
 
@@ -119,7 +124,7 @@ namespace ConsoleApp1.TestCases
 
                 _ElementPage.ClickOnLeftPaneElement(Driver, TestUtility.UtilityClass.GetDescriptionFromEnum(EnumLeftPaneGroupHeader.Elements), TestUtility.UtilityClass.GetDescriptionFromEnum(EnumLeftPaneElementList.UploadAndDownload));
                 _ElementPage.UploadFile(filepath);
-                Assert.AreEqual(@"C:\fakepath\NewUploadAutoIT.au3", _ElementPage.MethodUploadedFilePath());
+                Assert.AreEqual(@"C:\fakepath\Picture.jpg", _ElementPage.MethodUploadedFilePath());
 
                 #endregion
 
@@ -208,6 +213,19 @@ namespace ConsoleApp1.TestCases
                 Console.WriteLine(ex);
                 Assert.Fail(ex.Message);
             }
+        }
+
+        [TestMethod]
+        public void SetExcelValue()
+        {
+            string Filename = "My Data.xlsx";
+            Hashtable T1 = new Hashtable();
+            T1.Add("VIjay", "Patel");
+            T1.Add(1, 2);
+            T1.Add(0.5, "Vijay");
+            ExcelUtility.WriteDataInToExcelFile(Filename, "Vijay", "Country", "CountryName", T1);
+            DataTable FormData = TestUtility.ExcelUtility.ConvertExcelToDataTable(rootpath + "//TestData//Sample Test data.xlsx", "FormData");
+            ExcelUtility.WriteDataTableToExcel(Filename, "Patel", FormData);
         }
     }
 
